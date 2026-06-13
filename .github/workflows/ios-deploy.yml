@@ -1,0 +1,74 @@
+name: Deploy to TestFlight
+
+on:
+  push:
+    branches:
+      - release-ios
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: macos-15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.41.7'
+          channel: stable
+          cache: true
+
+      - name: Flutter pub get
+        run: flutter pub get
+
+      - name: Create .env file
+        env:
+          FLUTTER_ENV: ${{ secrets.FLUTTER_ENV }}
+        run: |
+          mkdir -p asset/config
+          echo "$FLUTTER_ENV" > asset/config/.env
+
+      - name: Build runner
+        run: flutter pub run build_runner build --delete-conflicting-outputs
+
+      # fastlane 실행에 필요
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.2'
+          working-directory: ios
+          bundler-cache: true
+
+      - name: Import distribution certificate
+        env:
+          DIST_CERTIFICATE_BASE64: ${{ secrets.DIST_CERTIFICATE_BASE64 }}
+          DIST_CERTIFICATE_PASSWORD: ${{ secrets.DIST_CERTIFICATE_PASSWORD }}
+        run: |
+          KEYCHAIN_PATH=$RUNNER_TEMP/signing.keychain-db
+          security create-keychain -p "temp_password" $KEYCHAIN_PATH
+          security set-keychain-settings -lut 21600 $KEYCHAIN_PATH
+          security unlock-keychain -p "temp_password" $KEYCHAIN_PATH
+
+          CERT_PATH=$RUNNER_TEMP/cert.p12
+          echo "$DIST_CERTIFICATE_BASE64" | base64 --decode > $CERT_PATH
+          security import $CERT_PATH -P "$DIST_CERTIFICATE_PASSWORD" -A -t cert -f pkcs12 -k $KEYCHAIN_PATH
+          security list-keychain -d user -s $KEYCHAIN_PATH
+
+      - name: Write ASC API key file
+        env:
+          ASC_KEY_CONTENT: ${{ secrets.ASC_KEY_CONTENT }}
+        run: |
+          echo "$ASC_KEY_CONTENT" | base64 --decode > $RUNNER_TEMP/asc_key.p8
+
+      - name: Deploy to TestFlight
+        working-directory: ios
+        env:
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+          ASC_KEY_FILEPATH: ${{ runner.temp }}/asc_key.p8
+          PROD_BASE_URL: ${{ secrets.PROD_BASE_URL }}
+          BUILD_NUMBER: ${{ github.run_number }}
+        run: bundle exec fastlane beta

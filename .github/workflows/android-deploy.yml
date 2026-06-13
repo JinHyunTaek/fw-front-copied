@@ -1,0 +1,85 @@
+name: Deploy to Google Play
+
+on:
+  push:
+    branches:
+      - release-android
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.41.7'
+          channel: stable
+          cache: true
+
+      - name: Flutter pub get
+        run: flutter pub get
+
+      - name: Create google-services.json
+        env:
+          GOOGLE_SERVICES_JSON: ${{ secrets.GOOGLE_SERVICES_JSON }}
+        run: echo "$GOOGLE_SERVICES_JSON" > android/app/google-services.json
+
+      - name: Create .env file
+        env:
+          FLUTTER_ENV: ${{ secrets.FLUTTER_ENV }}
+        run: |
+          mkdir -p asset/config
+          echo "$FLUTTER_ENV" > asset/config/.env
+
+      - name: Build runner
+        run: flutter pub run build_runner build --delete-conflicting-outputs
+
+      - name: Setup keystore
+        env:
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+          ANDROID_STORE_PASSWORD: ${{ secrets.ANDROID_STORE_PASSWORD }}
+        run: |
+          echo "$ANDROID_KEYSTORE_BASE64" | base64 --decode > android/app/keystore.jks
+          cat > android/key.properties <<EOF
+          storePassword=$ANDROID_STORE_PASSWORD
+          keyPassword=$ANDROID_KEY_PASSWORD
+          keyAlias=$ANDROID_KEY_ALIAS
+          storeFile=../app/keystore.jks
+          EOF
+
+      - name: Verify PROD_BASE_URL secret
+        env:
+          PROD_BASE_URL: ${{ secrets.PROD_BASE_URL }}
+        run: |
+          echo "length=${#PROD_BASE_URL}"
+          echo "first_char=${PROD_BASE_URL:0:1}"
+          echo "last_char=${PROD_BASE_URL: -1}"
+          if [ -z "$PROD_BASE_URL" ]; then
+            echo "::error::PROD_BASE_URL is empty"
+            exit 1
+          fi
+
+      - name: Build AAB
+        env:
+          PROD_BASE_URL: ${{ secrets.PROD_BASE_URL }}
+        run: |
+          flutter build appbundle --release \
+            --build-number=${{ github.run_number }} \
+            --dart-define=ENV=prod \
+            --dart-define=BASE_URL=$PROD_BASE_URL
+
+      - name: Upload to Google Play (Internal)
+        uses: r0adkll/upload-google-play@v1
+        with:
+          serviceAccountJsonPlainText: ${{ secrets.PLAY_STORE_SERVICE_ACCOUNT_JSON }}
+          packageName: com.ht.fightweek
+          releaseFiles: build/app/outputs/bundle/release/app-release.aab
+          tracks: internal
+          status: draft
