@@ -7,6 +7,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:mma_flutter/alert/model/update_alert_request.dart';
 import 'package:mma_flutter/alert/repository/alert_repository.dart';
+import 'package:mma_flutter/common/component/fighter_image.dart';
 import 'package:mma_flutter/common/component/retry_loading/custom_circular_progess_indicator.dart';
 import 'package:mma_flutter/common/component/retry_loading/retry_button.dart';
 import 'package:mma_flutter/common/const/colors.dart';
@@ -225,7 +226,7 @@ class _FighterDetailScreenState extends ConsumerState<FighterDetailScreen>
                     avgRating: data.avgRating,
                     myRating: data.myRating,
                   ),
-                  _imageCard(context),
+                  _imageCard(context, data.bodyUrl),
                 ],
               ),
               Container(
@@ -265,14 +266,14 @@ class _FighterDetailScreenState extends ConsumerState<FighterDetailScreen>
     );
   }
 
-  _imageCard(BuildContext context) {
+  _imageCard(BuildContext context, String? bodyUrl) {
     return Padding(
       padding: EdgeInsets.only(top: 18.h),
-      child: Image.asset(
-        'asset/img/component/default-body.png',
+      child: FighterImage.body(
+        imageUrl: bodyUrl,
         height: 246.h,
         width: 223.w,
-        color: context.colors.onSurface,
+        silhouetteColor: context.colors.onSurface,
       ),
     );
   }
@@ -388,7 +389,7 @@ class _FighterDetailScreenState extends ConsumerState<FighterDetailScreen>
                   label: '출생',
                   value:
                       fighter.birthday != null
-                          ? CustomDateUtils.formatDate(fighter.birthday!)
+                          ? CustomDateUtils.formatDateWithYear(fighter.birthday!)
                           : '-',
                 ),
                 _renderLabelWithValue(

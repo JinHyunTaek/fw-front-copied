@@ -17,6 +17,7 @@ class FighterDetailModel extends FighterModel {
   final String? nickname;
   final double avgRating;
   final int myRating;
+  final String? bodyUrl;
   final List<FighterFightEventModel>? fighterFightEvents;
 
   FighterDetailModel({
@@ -26,6 +27,7 @@ class FighterDetailModel extends FighterModel {
     required super.ranking,
     required super.record,
     required super.nationality,
+    required super.headshotUrl,
     required this.nickname,
     required this.height,
     required this.weight,
@@ -35,6 +37,7 @@ class FighterDetailModel extends FighterModel {
     required this.nation,
     required this.avgRating,
     required this.myRating,
+    required this.bodyUrl,
     required this.fighterFightEvents,
   });
 

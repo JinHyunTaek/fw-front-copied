@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mma_flutter/common/component/fighter_image.dart';
 import 'package:mma_flutter/common/component/pagination_list_view.dart';
 import 'package:mma_flutter/common/const/colors.dart';
 import 'package:mma_flutter/fighter/screen/fighter_detail_screen.dart';
@@ -124,7 +125,7 @@ class FighterRatingRankingScreen extends ConsumerWidget {
                                           textAlign: TextAlign.center,
                                         ),
                                       ),
-                                      _renderHeadshot(context),
+                                      _renderHeadshot(context, model.headshotUrl),
                                       Expanded(
                                         child: Text(
                                           model.name,
@@ -180,11 +181,11 @@ class FighterRatingRankingScreen extends ConsumerWidget {
     );
   }
 
-  Widget _renderHeadshot(BuildContext context) {
-    return Image.asset(
+  Widget _renderHeadshot(BuildContext context, String? headshotUrl) {
+    return FighterImage.head(
+      imageUrl: headshotUrl,
       height: 44.h,
-      'asset/img/component/default-head.png',
-      color: context.colors.onSurface,
+      silhouetteColor: context.colors.onSurface,
     );
   }
 }

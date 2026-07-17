@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:mma_flutter/common/component/fighter_image.dart';
 import 'package:mma_flutter/common/component/retry_loading/custom_circular_progess_indicator.dart';
 import 'package:mma_flutter/common/component/retry_loading/retry_button.dart';
 import 'package:mma_flutter/common/const/colors.dart';
@@ -35,7 +36,13 @@ import 'package:mma_flutter/user/model/user_model.dart';
 class StreamMainView extends ConsumerStatefulWidget {
   final UserModel user;
 
-  const StreamMainView({required this.user, super.key});
+  final int initialTabIndex;
+
+  const StreamMainView({
+    required this.user,
+    this.initialTabIndex = 0,
+    super.key,
+  });
 
   @override
   ConsumerState<StreamMainView> createState() => _StreamMainViewState();
@@ -52,7 +59,11 @@ class _StreamMainViewState extends ConsumerState<StreamMainView>
   @override
   void initState() {
     log('--stream main view init--');
-    _tabController = TabController(length: 5, vsync: this);
+    _tabController = TabController(
+      length: 5,
+      vsync: this,
+      initialIndex: widget.initialTabIndex,
+    );
     banner = BannerAd(
       size: AdSize.banner,
       adUnitId: AdMobService.bannerAdUnitId,
@@ -385,6 +396,7 @@ class _StreamMainViewState extends ConsumerState<StreamMainView>
                   ffe.winner.koreanName != null
                       ? ffe.winner.koreanName!
                       : ffe.winner.name,
+              imageUrl: ffe.winner.headshotUrl,
               color: RED_COLOR,
               imageHeight: imageHeight,
               nameBarHeight: nameBarHeight,
@@ -401,6 +413,7 @@ class _StreamMainViewState extends ConsumerState<StreamMainView>
                   ffe.loser.koreanName != null
                       ? ffe.loser.koreanName!
                       : ffe.loser.name,
+              imageUrl: ffe.loser.headshotUrl,
               color: BLUE_COLOR,
               imageHeight: imageHeight,
               nameBarHeight: nameBarHeight,
@@ -413,6 +426,7 @@ class _StreamMainViewState extends ConsumerState<StreamMainView>
 
   _renderHeaderFighterInfo({
     required String name,
+    required String? imageUrl,
     required Color color,
     required double imageHeight,
     required double nameBarHeight,
@@ -422,12 +436,12 @@ class _StreamMainViewState extends ConsumerState<StreamMainView>
       mainAxisSize: MainAxisSize.min,
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        Image.asset(
-          'asset/img/component/default-head.png',
+        FighterImage.head(
+          imageUrl: imageUrl,
           height: imageHeight,
           width: imageWidth,
           fit: BoxFit.fitHeight,
-          color: context.colors.onSurface,
+          silhouetteColor: context.colors.onSurface,
         ),
         SizedBox(height: 4.h),
         SizedBox(

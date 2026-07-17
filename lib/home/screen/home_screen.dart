@@ -3,12 +3,14 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:mma_flutter/common/component/fighter_image.dart';
 import 'package:mma_flutter/common/component/retry_loading/custom_circular_progess_indicator.dart';
 import 'package:mma_flutter/common/component/retry_loading/retry_button.dart';
 import 'package:mma_flutter/common/const/colors.dart';
 import 'package:mma_flutter/common/screen/home_splash_screen.dart';
 import 'package:mma_flutter/common/utils/date_utils.dart';
 import 'package:mma_flutter/common/utils/fight_utils.dart';
+import 'package:mma_flutter/home/component/home_promotion_banner.dart';
 import 'package:mma_flutter/home/component/user_punished_dialog.dart';
 import 'package:mma_flutter/home/provider/home_future_provider.dart';
 import 'package:mma_flutter/main.dart';
@@ -92,7 +94,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
             ),
           ),
           child: SingleChildScrollView(
-            physics: Platform.isIOS ? const BouncingScrollPhysics() : const ClampingScrollPhysics(),
+            physics:
+                Platform.isIOS
+                    ? const BouncingScrollPhysics()
+                    : const ClampingScrollPhysics(),
             child: Column(
               children: [
                 SizedBox(
@@ -100,8 +105,15 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                   child: Stack(
                     alignment: Alignment.center,
                     children: [
+                      if (data.activePromotions.homePromotions.isNotEmpty)
+                        Positioned(
+                          top: 6.h,
+                          child: HomePromotionBanner(
+                            homePromotionModel: data.activePromotions.homePromotions.first,
+                          ),
+                        ),
                       Positioned(
-                        top: -1.h,
+                        top: 57.h,
                         left: 0,
                         right: 0,
                         child: Stack(
@@ -139,7 +151,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                         ),
                       ),
                       Positioned(
-                        top: 162.h,
+                        top: 219.h,
                         child: Text(
                           'VS',
                           style: TextStyle(
@@ -151,7 +163,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                         ),
                       ),
                       Positioned(
-                        top: 161.h,
+                        top: 218.h,
                         left: 0,
                         right: 0,
                         child: Stack(
@@ -175,7 +187,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                         ),
                       ),
                       Positioned(
-                        top: 168.h,
+                        top: 215.h,
                         left: 0,
                         right: 0,
                         child: Row(
@@ -184,7 +196,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                               child: ClipRect(
                                 child: Align(
                                   alignment: Alignment.centerRight,
-                                  child: _renderImageWithOpacity(context),
+                                  child: _renderImageWithOpacity(context,imgUrl: data.winnerBodyUrl),
                                 ),
                               ),
                             ),
@@ -197,7 +209,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                                     transform:
                                         Matrix4.identity()
                                           ..scaleByDouble(-1.0, 1.0, 1.0, 1.0),
-                                    child: _renderImageWithOpacity(context),
+                                    child: _renderImageWithOpacity(context,imgUrl: data.loserBodyUrl),
                                   ),
                                 ),
                               ),
@@ -233,7 +245,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                       child:
                           data.mainCardDateTimeInfo != null
                               ? Text(
-                                '${CustomDateUtils.formatDate(data.mainCardDateTimeInfo!.date)} '
+                                '${CustomDateUtils.formatDateWithYear(data.mainCardDateTimeInfo!.date)} '
                                 '| KST ${CustomDateUtils.formatDurationToHHMM(data.mainCardDateTimeInfo!.time)}',
                                 style: context.text.bodySmall?.copyWith(
                                   fontSize: 12.sp,
@@ -261,7 +273,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                                   Navigator.of(context).push(
                                     MaterialPageRoute(
                                       builder: (context) {
-                                        return StreamMainView(user: userState);
+                                        // 홈 배너의 핵심 유도 = 경기 예측 → PICK 탭(인덱스 2)으로 진입
+                                        return StreamMainView(
+                                          user: userState,
+                                          initialTabIndex: 2,
+                                        );
                                       },
                                     ),
                                   );
@@ -273,7 +289,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                           ),
                         ),
                         child: Text(
-                          "라이브 경기 바로가기",
+                          "경기 예측하러 가기",
                           style: context.text.bodyMedium!.copyWith(
                             color: context.colors.onSurface,
                           ),
@@ -310,7 +326,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
     );
   }
 
-  Widget _renderImageWithOpacity(BuildContext context) {
+  Widget _renderImageWithOpacity(BuildContext context,{required String? imgUrl}) {
     return Container(
       foregroundDecoration: BoxDecoration(
         gradient: LinearGradient(
@@ -322,12 +338,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
           ],
         ),
       ),
-      child: Image.asset(
-        'asset/img/component/default-body.png',
-        height: 344.h,
-        width: 226.w,
-        fit: BoxFit.contain,
-        color: context.colors.onSurface,
+      child: FighterImage.body(
+        imageUrl: imgUrl,
+        height: 360.h,
+        width: 246.w,
       ),
     );
   }

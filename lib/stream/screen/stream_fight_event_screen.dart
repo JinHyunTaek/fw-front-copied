@@ -39,13 +39,6 @@ class _StreamFightEventScreenState
   @override
   void initState() {
     log('initialize stream_event_detail_screen!');
-    final state = ref.read(streamFightEventProvider);
-    if (state is StateData<StreamFightEventModel>) {
-      checkBoxValues = List.generate(
-        state.data!.fighterFightEvents.length,
-        (index) => false,
-      );
-    }
     super.initState();
   }
 
@@ -72,6 +65,10 @@ class _StreamFightEventScreenState
     }
 
     final event = state as StateData<StreamFightEventModel>;
+    if(event.data!.fighterFightEvents.length != checkBoxValues.length) {
+      checkBoxValues =
+          List.generate(event.data!.fighterFightEvents.length, (_) => false,);
+    }
 
     return SafeArea(
       child: Container(

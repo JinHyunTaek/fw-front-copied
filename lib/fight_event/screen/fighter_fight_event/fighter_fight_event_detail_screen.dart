@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:mma_flutter/common/component/fighter_image.dart';
 import 'package:mma_flutter/common/component/retry_loading/custom_circular_progess_indicator.dart';
 import 'package:mma_flutter/common/component/retry_loading/retry_button.dart';
 import 'package:mma_flutter/common/const/colors.dart';
@@ -87,7 +88,7 @@ class FighterFightEventDetailScreen extends ConsumerWidget {
                 ),
                 if (cardStartDateTimeInfo != null)
                   Text(
-                    '${CustomDateUtils.formatDate(cardStartDateTimeInfo!.date)} ${CustomDateUtils.formatDurationToHHMM(cardStartDateTimeInfo!.time)} KST',
+                    '${CustomDateUtils.formatDateWithYear(cardStartDateTimeInfo!.date)} ${CustomDateUtils.formatDurationToHHMM(cardStartDateTimeInfo!.time)} KST',
                     style: TextStyle(fontSize: 12.sp, color: MID_GREY_COLOR),
                   ),
                 Row(
@@ -101,6 +102,7 @@ class FighterFightEventDetailScreen extends ConsumerWidget {
                             context,
                             isEnded: result != null,
                             isWinner: true,
+                            bodyUrl: data.winner.bodyUrl,
                           ),
                         ),
                       ),
@@ -118,6 +120,7 @@ class FighterFightEventDetailScreen extends ConsumerWidget {
                               context,
                               isEnded: result != null,
                               isWinner: false,
+                              bodyUrl: data.loser.bodyUrl,
                             ),
                           ),
                         ),
@@ -182,6 +185,7 @@ class FighterFightEventDetailScreen extends ConsumerWidget {
     BuildContext context, {
     required bool isEnded,
     required bool isWinner,
+    required String? bodyUrl,
   }) {
     return Stack(
       children: [
@@ -218,9 +222,9 @@ class FighterFightEventDetailScreen extends ConsumerWidget {
                       1,
                       0,
                     ]),
-                    child: _renderBodyImage(context),
+                    child: _renderBodyImage(context, bodyUrl),
                   )
-                  : _renderBodyImage(context),
+                  : _renderBodyImage(context, bodyUrl),
         ),
         if (isWinner && isEnded && !result!.nc && !result!.draw)
           Positioned(
@@ -240,13 +244,13 @@ class FighterFightEventDetailScreen extends ConsumerWidget {
     );
   }
 
-  Widget _renderBodyImage(BuildContext context) {
-    return Image.asset(
-      'asset/img/component/default-body.png',
+  Widget _renderBodyImage(BuildContext context, String? bodyUrl) {
+    return FighterImage.body(
+      imageUrl: bodyUrl,
       height: 301.h,
       width: 226.w,
       fit: BoxFit.contain,
-      color: context.colors.onSurface,
+      silhouetteColor: context.colors.onSurface,
     );
   }
 }

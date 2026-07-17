@@ -6,6 +6,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mma_flutter/common/const/data.dart';
 import 'package:mma_flutter/common/const/style.dart';
+import 'package:mma_flutter/event/common/screen/active_event_screen.dart';
 import 'package:mma_flutter/main.dart';
 import 'package:mma_flutter/ranking/screen/fighter_ranking_screen.dart';
 import 'package:mma_flutter/ranking/screen/fighter_rating_ranking_screen.dart';
@@ -164,6 +165,28 @@ class DefaultLayout extends ConsumerWidget {
                   },
                   title: Text(
                     '파이터 호감도 랭킹',
+                    style: tileTextStyle,
+                  ),
+                ),
+                // 랭킹 그룹과 이벤트를 시각적으로 분리
+                Divider(
+                  color: context.colors.subText.withValues(alpha: 0.3),
+                  height: 1,
+                  indent: 32.w,
+                  endIndent: 32.w,
+                ),
+                ListTile(
+                  contentPadding: tilePadding,
+                  onTap: () {
+                    Navigator.of(context).pop();
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) => const ActiveEventScreen(),
+                      ),
+                    );
+                  },
+                  title: Text(
+                    '🎁 이벤트',
                     style: tileTextStyle,
                   ),
                 ),

@@ -54,11 +54,13 @@ class StreamFighterFightEventModel
   final StreamFighterFightEventStatus status;
   final int firstFighterBetCount;
   final int lastFighterBetCount;
+  final bool winnerChanged;
 
   StreamFighterFightEventModel({
     required this.status,
     required this.firstFighterBetCount,
     required this.lastFighterBetCount,
+    required this.winnerChanged,
     required super.id,
     required super.winner,
     required super.loser,

@@ -30,6 +30,7 @@ class FighterFightEventFighterModel extends FighterModel {
   final DateTime? birthday;
   final int height;
   final double? weight;
+  final String? bodyUrl;
 
   FighterFightEventFighterModel({
     required super.id,
@@ -38,10 +39,12 @@ class FighterFightEventFighterModel extends FighterModel {
     required super.record,
     required super.ranking,
     required super.nationality,
+    required super.headshotUrl,
     required this.weight,
     required this.height,
     required this.birthday,
     required this.reach,
+    required this.bodyUrl,
   });
 
   factory FighterFightEventFighterModel.fromJson(Map<String, dynamic> json) {

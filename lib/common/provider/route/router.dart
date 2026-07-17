@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mma_flutter/app_status/screen/app_maintenance_alert_screen.dart';
+import 'package:mma_flutter/common/firebase/analytics.dart';
 import 'package:mma_flutter/common/screen/root_tab.dart';
 import 'package:mma_flutter/common/screen/splash_screen.dart';
+import 'package:mma_flutter/event/common/screen/active_event_screen.dart';
+import 'package:mma_flutter/event/promotion/screen/promotion_detail_screen.dart';
 import 'package:mma_flutter/fighter/screen/fighter_detail_screen.dart';
 import 'package:mma_flutter/game/model/game_args.dart';
 import 'package:mma_flutter/game/screen/game_description_screen.dart';
@@ -39,7 +42,23 @@ final routerProvider = Provider<GoRouter>((ref) {
         builder: (context, state) => RootTab(),
         routes: [
           GoRoute(
-            path: 'fighter_detail/:id',
+            path: ActiveEventScreen.routeName,
+            name: ActiveEventScreen.routeName,
+            builder: (context, state) {
+              return ActiveEventScreen();
+            },
+            routes: [
+              GoRoute(
+                path: '${PromotionDetailScreen.routeName}/:id',
+                name: PromotionDetailScreen.routeName,
+                builder: (context, state) {
+                  return PromotionDetailScreen(id: int.parse(state.pathParameters['id']!));
+                },
+              ),
+            ]
+          ),
+          GoRoute(
+            path: '${FighterDetailScreen.routeName}/:id',
             name: FighterDetailScreen.routeName,
             builder: (context, state) {
               return FighterDetailScreen(
@@ -47,15 +66,6 @@ final routerProvider = Provider<GoRouter>((ref) {
               );
             },
           ),
-          // GoRoute(
-          //   path: 'event_detail/:date',
-          //   name: FightEventDetailScreen.routeName,
-          //   builder: (context, state) {
-          //     return FightEventDetailScreen(
-          //       date: DateTime.parse(state.pathParameters['date']!),
-          //     );
-          //   },
-          // ),
           GoRoute(
             path: GameMainScreen.routeName,
             name: GameMainScreen.routeName,
@@ -202,6 +212,8 @@ final routerProvider = Provider<GoRouter>((ref) {
     ],
     initialLocation: '/splash',
     refreshListenable: provider,
+    // 화면 이동마다 screen_view 이벤트 전송 → 가입 퍼널(어느 화면에서 이탈하는지) 분석
+    observers: [Analytics.observer],
 
     /// provider 상태 변경될 때 redirect 실행
     redirect: (context, state) {

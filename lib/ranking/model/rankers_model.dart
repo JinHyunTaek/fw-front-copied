@@ -22,6 +22,7 @@ class RankerModel {
   final String name;
   final String? koreanName;
   final RankingCategory category;
+  final String? headshotUrl;
 
   const RankerModel({
     required this.id,
@@ -29,6 +30,7 @@ class RankerModel {
     required this.name,
     required this.koreanName,
     required this.category,
+    required this.headshotUrl,
   });
 
   factory RankerModel.fromJson(Map<String, dynamic> json) =>

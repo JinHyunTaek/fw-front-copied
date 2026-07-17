@@ -7,7 +7,6 @@ import 'package:mma_flutter/common/utils/fight_utils.dart';
 import 'package:mma_flutter/fight_event/component/card/fighter_fight_event_card_row.dart';
 import 'package:mma_flutter/fight_event/model/card_date_time_info_model.dart';
 import 'package:mma_flutter/fight_event/screen/fighter_fight_event/fighter_fight_event_detail_screen.dart';
-import 'package:mma_flutter/fighter/model/fighter_model.dart';
 import 'package:mma_flutter/main.dart';
 import 'package:mma_flutter/stream/model/stream_fight_event_model.dart';
 
@@ -100,8 +99,6 @@ class _FightEventCardState extends ConsumerState<StreamFighterFightEventCard> {
                 child: FighterFightEventCardRow(
                   ffe: widget.ffe,
                   betRateBar: _betRateBar(
-                    winner: widget.ffe.winner,
-                    loser: widget.ffe.loser,
                   ),
                 ),
               ),
@@ -112,15 +109,17 @@ class _FightEventCardState extends ConsumerState<StreamFighterFightEventCard> {
     );
   }
 
-  Widget _betRateBar({
-    required FighterModel winner,
-    required FighterModel loser,
-  }) {
-    int winnerRate = firstFighterCountToRate(
+  Widget _betRateBar() {
+    int firstFighterRate = firstFighterCountToRate(
       first: widget.ffe.firstFighterBetCount.toInt(),
       last: widget.ffe.lastFighterBetCount.toInt(),
     );
-    int loserRate = 100 - winnerRate;
+    int lastFighterRate = 100 - firstFighterRate;
+    if (widget.ffe.winnerChanged) {
+      int temp = firstFighterRate;
+      firstFighterRate = lastFighterRate;
+      lastFighterRate = temp;
+    }
     return Container(
       padding: EdgeInsets.only(top: 2.h, bottom: 10.h),
       child: SizedBox(
@@ -128,7 +127,7 @@ class _FightEventCardState extends ConsumerState<StreamFighterFightEventCard> {
         child: Row(
           children: [
             Expanded(
-              flex: winnerRate,
+              flex: firstFighterRate,
               child: Container(
                 padding: EdgeInsets.only(left: 12.w, right: 4.w),
                 decoration: BoxDecoration(
@@ -139,7 +138,7 @@ class _FightEventCardState extends ConsumerState<StreamFighterFightEventCard> {
                   ),
                 ),
                 child: Text(
-                  '$winnerRate%',
+                  '$firstFighterRate%',
                   overflow: TextOverflow.ellipsis,
                   style: context.text.bodyMedium?.copyWith(
                     color: WHITE_COLOR,
@@ -150,7 +149,7 @@ class _FightEventCardState extends ConsumerState<StreamFighterFightEventCard> {
               ),
             ),
             Expanded(
-              flex: loserRate,
+              flex: lastFighterRate,
               child: Container(
                 padding: EdgeInsets.only(right: 12.w, left: 4.w),
                 decoration: BoxDecoration(
@@ -161,7 +160,7 @@ class _FightEventCardState extends ConsumerState<StreamFighterFightEventCard> {
                   ),
                 ),
                 child: Text(
-                  '$loserRate%',
+                  '$lastFighterRate%',
                   overflow: TextOverflow.ellipsis,
                   style: context.text.bodyMedium?.copyWith(
                     color: WHITE_COLOR,

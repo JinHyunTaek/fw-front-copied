@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mma_flutter/common/component/fighter_image.dart';
 import 'package:mma_flutter/common/component/retry_loading/custom_circular_progess_indicator.dart';
 import 'package:mma_flutter/common/component/retry_loading/retry_button.dart';
 import 'package:mma_flutter/common/const/colors.dart';
@@ -201,11 +202,11 @@ class _RankingTab extends StatelessWidget {
                 Positioned(
                   left: 60.w,
                   top: -10.h,
-                  child: Image.asset(
-                    'asset/img/component/default-head.png',
+                  child: FighterImage.head(
+                    imageUrl: champ.headshotUrl,
                     height: 77.h,
                     width: 123.w,
-                    color: context.colors.onSurface,
+                    silhouetteColor: context.colors.onSurface,
                   ),
                 ),
               ],
@@ -273,11 +274,11 @@ class _RankingTab extends StatelessWidget {
                             Positioned(
                               left: 40,
                               top: -16.h,
-                              child: Image.asset(
-                                'asset/img/component/default-head.png',
+                              child: FighterImage.head(
+                                imageUrl: e.headshotUrl,
                                 height: 43.h,
                                 width: 68.w,
-                                color: context.colors.onSurface,
+                                silhouetteColor: context.colors.onSurface,
                               ),
                             ),
                           ],

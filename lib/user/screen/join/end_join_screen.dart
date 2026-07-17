@@ -180,6 +180,9 @@ class _EndJoinScreenState extends ConsumerState<EndJoinScreen> {
                             password.length < 6
                         ? null
                         : () async {
+                          // 가입 성공 시 auth 상태 변경으로 홈으로 리다이렉트되므로,
+                          // await 전에 messenger를 잡아둬야 스낵바를 안전하게 띄울 수 있음
+                          final messenger = ScaffoldMessenger.of(context);
                           await ref
                               .read(userProvider.notifier)
                               .join(
@@ -192,6 +195,15 @@ class _EndJoinScreenState extends ConsumerState<EndJoinScreen> {
                           await ref
                               .read(userProvider.notifier)
                               .login(email: widget.email, password: password);
+                          // join/login은 실패 시 예외 대신 에러 상태로 바뀌므로,
+                          // 실제 로그인 성공(에러 상태 아님)일 때만 환영 메시지를 띄움
+                          if (ref.read(userProvider) is! UserLoginErrorErrorModel) {
+                            messenger.showSnackBar(
+                              SnackBar(
+                                content: Text('$nickname님, 회원가입이 완료되었습니다. 환영합니다!'),
+                              ),
+                            );
+                          }
                         },
                 text: '회원가입 완료',
               ),

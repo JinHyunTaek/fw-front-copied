@@ -9,11 +9,13 @@ class RatingRankerModel implements ModelWithId{
   final int id;
   final double avgRating;
   final String name;
+  final String? headshotUrl;
 
   const RatingRankerModel({
     required this.id,
     required this.avgRating,
     required this.name,
+    required this.headshotUrl,
   });
 
   factory RatingRankerModel.fromJson(Map<String, dynamic> json)

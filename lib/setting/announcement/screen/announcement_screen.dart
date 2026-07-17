@@ -56,7 +56,7 @@ class AnnouncementScreen extends ConsumerWidget {
                           Text(model.title, style: context.text.bodyMedium),
                           SizedBox(height: 4.h),
                           Text(
-                            CustomDateUtils.formatDate(model.createdDate),
+                            CustomDateUtils.formatDateWithYear(model.createdDate),
                             style: context.text.bodyMedium?.copyWith(
                               color: LIGHT_GREY_COLOR,
                               fontSize: 12.sp,

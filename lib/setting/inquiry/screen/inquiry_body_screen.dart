@@ -30,7 +30,7 @@ class InquiryBodyScreen extends ConsumerWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '[${model.category.korean}] ${CustomDateUtils.formatDate(model.createdDate)}',
+                  '[${model.category.korean}] ${CustomDateUtils.formatDateWithYear(model.createdDate)}',
                   style: context.text.bodyMedium,
                 ),
                 Padding(
@@ -57,7 +57,7 @@ class InquiryBodyScreen extends ConsumerWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        '[답변일] ${CustomDateUtils.formatDate(model.answeredDate!)}',
+                        '[답변일] ${CustomDateUtils.formatDateWithYear(model.answeredDate!)}',
                         style: context.text.bodyMedium,
                       ),
                       Padding(

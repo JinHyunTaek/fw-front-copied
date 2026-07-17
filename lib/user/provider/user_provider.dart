@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:mma_flutter/common/const/data.dart';
+import 'package:mma_flutter/common/firebase/analytics.dart';
 import 'package:mma_flutter/common/firebase/provider/fcm_token_provider.dart';
 import 'package:mma_flutter/common/provider/secure_storage_provider.dart';
 import 'package:mma_flutter/game/provider/game_provider.dart';
@@ -208,6 +209,8 @@ class UserStateNotifier extends StateNotifier<UserModelBase?> {
         return;
       }
       if (userResp.nickname == null) {
+        // 닉네임 미설정 = 이번에 처음 생성된 소셜 계정 → 신규 가입으로 집계
+        await Analytics.logSignUp(method: request.domain);
         state = UserModelNicknameSetting(
           point: userResp.point,
           id: userResp.id,
@@ -240,6 +243,7 @@ class UserStateNotifier extends StateNotifier<UserModelBase?> {
     try {
       state = UserModelJoining();
       await userRepository.join(request: request);
+      await Analytics.logSignUp(method: 'email');
     } on DioException catch (e) {
       final code = fromErrorCode(e.response?.data['errorCode']);
       if (code != null) {

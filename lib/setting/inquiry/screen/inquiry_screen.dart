@@ -141,7 +141,7 @@ class InquiryScreen extends StatelessWidget {
               children: [
                 Expanded(
                   child: Text(
-                    CustomDateUtils.formatDate(model.createdDate),
+                    CustomDateUtils.formatDateWithYear(model.createdDate),
                     style: TextStyle(color: MID_GREY_COLOR, fontSize: 13.sp),
                     textAlign: TextAlign.center,
                   ),
@@ -156,7 +156,7 @@ class InquiryScreen extends StatelessWidget {
                 Expanded(
                   child: Text(
                     model.answeredDate != null
-                        ? CustomDateUtils.formatDate(model.answeredDate!)
+                        ? CustomDateUtils.formatDateWithYear(model.answeredDate!)
                         : '-',
                     style: context.text.bodySmall,
                     textAlign: TextAlign.center,

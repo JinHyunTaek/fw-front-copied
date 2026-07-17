@@ -78,7 +78,7 @@ class FightEventCardHeader extends ConsumerWidget {
             alignment:
                 fightEventScreen ? Alignment.center : Alignment.centerLeft,
             child: Text(
-              CustomDateUtils.formatDate(displayDate),
+              CustomDateUtils.formatDateWithYear(displayDate),
               style: context.text.bodySmall?.copyWith(
                 color: context.colors.subText,
               ),

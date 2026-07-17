@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mma_flutter/common/component/fighter_image.dart';
 import 'package:mma_flutter/common/const/colors.dart';
 import 'package:mma_flutter/common/enum/country.dart';
 import 'package:mma_flutter/common/utils/fight_utils.dart';
@@ -369,7 +370,10 @@ class _TappableFighterImageState extends State<_TappableFighterImage> {
           key: ValueKey(widget.fighter.id),
           width: 86.w,
           height: 57.h,
-          child: Image.asset('asset/img/component/default-head.png',color: context.colors.onSurface,),
+          child: FighterImage.head(
+            imageUrl: widget.fighter.headshotUrl,
+            silhouetteColor: context.colors.onSurface,
+          ),
         ),
       ),
     );

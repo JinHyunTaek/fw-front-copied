@@ -43,7 +43,7 @@ class AnnouncementContentScreen extends ConsumerWidget {
                       Padding(
                         padding: EdgeInsets.symmetric(vertical: 12.h),
                         child: Text(
-                          CustomDateUtils.formatDate(model.createdDate),
+                          CustomDateUtils.formatDateWithYear(model.createdDate),
                           style: TextStyle(
                             color: LIGHT_GREY_COLOR,
                             fontSize: 12.sp,

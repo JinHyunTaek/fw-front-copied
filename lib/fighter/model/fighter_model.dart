@@ -12,6 +12,7 @@ class FighterModel implements ModelWithId{
   final String name;
   final String? koreanName;
   final int? ranking;
+  final String? headshotUrl;
   final FightRecordModel record;
   final Country? nationality;
 
@@ -20,6 +21,7 @@ class FighterModel implements ModelWithId{
     required this.name,
     required this.koreanName,
     required this.ranking,
+    required this.headshotUrl,
     required this.record,
     required this.nationality,
   });
